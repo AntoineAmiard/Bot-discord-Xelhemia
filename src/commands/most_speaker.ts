@@ -1,25 +1,33 @@
 /* eslint-disable indent */
 import * as discord from "discord.js";
 import * as fs from "fs";
-import * as json from "../config/blacklist.json";
+import * as json from "../config/list.json";
 
 import { Command } from "../types/types";
 
 export default class MostSpeaker implements Command {
-  readonly name: string = "test";
+  readonly name: string = "causeurs";
   readonly description: string = "";
 
   public async execute(message: discord.Message): Promise<void> {
+    if (!json.whitelist.includes(message.author.id)) {
+      await message.channel.send(
+        "Vous n'êtes pas autorisé a utiliser cette commande"
+      );
+      return;
+    }
+
     const timeStamp: number = Date.now() - 1000 * 60 * 60 * 24 * 30 * 3;
     const cristal = message.guild.emojis.cache.get("665132320595902481");
     const poulpe = message.guild.emojis.cache.get("695904787564068874");
+    const role = message.guild.roles.cache.get("708618412561137735");
 
     await message.channel.send(
       `Ok, je vais chercher les mollusques causeurs au fond de la mer ${poulpe}`
     );
 
-    const users: Map<discord.User, number> = new Map();
-    message.guild.members.cache.map((member) => users.set(member.user, 0));
+    const users: Map<discord.GuildMember, number> = new Map();
+    message.guild.members.cache.map((member) => users.set(member, 0));
 
     const channels = message.guild.channels.cache.filter(
       (channel) => channel.type == "text"
@@ -35,7 +43,7 @@ export default class MostSpeaker implements Command {
           );
 
           messages.map((message) => {
-            users.set(message.author, users.get(message.author) + 1);
+            users.set(message.member, users.get(message.member) + 1);
           });
 
           lastMessage = messages.last();
@@ -45,7 +53,6 @@ export default class MostSpeaker implements Command {
             break;
           }
         } while (lastMessage.createdTimestamp > timeStamp);
-        console.log("");
       })
     );
 
@@ -61,12 +68,13 @@ export default class MostSpeaker implements Command {
     let list: Array<Object> = [];
     let max = 15;
     for (let i = 0; i < max; i++) {
-      const userId = membersArr[i][0].id;
-      console.log(userId);
-      if (!json.blacklist.includes(userId)) {
+      const user = membersArr[i];
+
+      if (!json.blacklist_causeur.includes(user[0].user.id)) {
+        // user[0].roles.add(role);
         list.push({
           name: `    ----------------- `,
-          value: `${cristal} <@${userId}>`,
+          value: `${cristal} <@${user[0].user.id}>`,
         });
       } else {
         max++;
@@ -78,7 +86,9 @@ export default class MostSpeaker implements Command {
       color: 0xe7a3ff,
       fields: list,
     };
-    await message.channel.send({ embed: embed });
+    await (message.guild.channels.cache.get(
+      "546411892793540609"
+    ) as discord.TextChannel).send({ embed: embed });
   }
 
   public help(): string {

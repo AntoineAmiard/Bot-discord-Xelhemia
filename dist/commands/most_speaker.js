@@ -1,18 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const json = require("../config/blacklist.json");
+const json = require("../config/list.json");
 class MostSpeaker {
     constructor() {
-        this.name = "test";
+        this.name = "causeurs";
         this.description = "";
     }
     async execute(message) {
+        if (!json.whitelist.includes(message.author.id)) {
+            await message.channel.send("Vous n'êtes pas autorisé a utiliser cette commande");
+            return;
+        }
         const timeStamp = Date.now() - 1000 * 60 * 60 * 24 * 30 * 3;
         const cristal = message.guild.emojis.cache.get("665132320595902481");
         const poulpe = message.guild.emojis.cache.get("695904787564068874");
+        const role = message.guild.roles.cache.get("708618412561137735");
         await message.channel.send(`Ok, je vais chercher les mollusques causeurs au fond de la mer ${poulpe}`);
         const users = new Map();
-        message.guild.members.cache.map((member) => users.set(member.user, 0));
+        message.guild.members.cache.map((member) => users.set(member, 0));
         const channels = message.guild.channels.cache.filter((channel) => channel.type == "text");
         await Promise.all(channels.map(async (channel) => {
             let lastMessage = null;
@@ -20,7 +25,7 @@ class MostSpeaker {
             do {
                 let messages = await channel.messages.fetch(options);
                 messages.map((message) => {
-                    users.set(message.author, users.get(message.author) + 1);
+                    users.set(message.member, users.get(message.member) + 1);
                 });
                 lastMessage = messages.last();
                 try {
@@ -30,7 +35,6 @@ class MostSpeaker {
                     break;
                 }
             } while (lastMessage.createdTimestamp > timeStamp);
-            console.log("");
         }));
         await message.channel.send(`Je remonte à la surface ! ${poulpe}`);
         const mostSpeaker = new Map([...users.entries()].sort((a, b) => a[1] - b[1]));
@@ -38,12 +42,11 @@ class MostSpeaker {
         let list = [];
         let max = 15;
         for (let i = 0; i < max; i++) {
-            const userId = membersArr[i][0].id;
-            console.log(userId);
-            if (!json.blacklist.includes(userId)) {
+            const user = membersArr[i];
+            if (!json.blacklist_causeur.includes(user[0].user.id)) {
                 list.push({
                     name: `    ----------------- `,
-                    value: `${cristal} <@${userId}>`,
+                    value: `${cristal} <@${user[0].user.id}>`,
                 });
             }
             else {
@@ -55,7 +58,7 @@ class MostSpeaker {
             color: 0xe7a3ff,
             fields: list,
         };
-        await message.channel.send({ embed: embed });
+        await message.guild.channels.cache.get("546411892793540609").send({ embed: embed });
     }
     help() {
         return "Display pong";
