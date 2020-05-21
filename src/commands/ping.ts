@@ -7,9 +7,7 @@ export default class Ping implements Command {
   readonly description: string = "";
 
   public async execute(message: discord.Message): Promise<void> {
-    await (message.guild.channels.cache.get(
-      "546411892793540609"
-    ) as discord.TextChannel).send("Pong !");
+    await message.channel.send("Pong !");
   }
 
   public help(): string {

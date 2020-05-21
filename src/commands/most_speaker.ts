@@ -21,8 +21,11 @@ export default class MostSpeaker implements Command {
     const cristal = message.guild.emojis.cache.get("665132320595902481");
     const poulpe = message.guild.emojis.cache.get("695904787564068874");
     const role = message.guild.roles.cache.get("708618412561137735");
+    const generalChannel = message.guild.channels.cache.get(
+      "546411892793540609"
+    ) as discord.TextChannel;
 
-    await message.channel.send(
+    await generalChannel.send(
       `Ok, je vais chercher les mollusques causeurs au fond de la mer ${poulpe}`
     );
 
@@ -56,7 +59,7 @@ export default class MostSpeaker implements Command {
       })
     );
 
-    await message.channel.send(`Je remonte à la surface ! ${poulpe}`);
+    await generalChannel.send(`Je remonte à la surface ! ${poulpe}`);
     const mostSpeaker = new Map(
       [...users.entries()].sort((a, b) => a[1] - b[1])
     );
@@ -71,7 +74,7 @@ export default class MostSpeaker implements Command {
       const user = membersArr[i];
 
       if (!json.blacklist_causeur.includes(user[0].user.id)) {
-        // user[0].roles.add(role);
+        user[0].roles.add(role);
         list.push({
           name: `    ----------------- `,
           value: `${cristal} <@${user[0].user.id}>`,
@@ -86,9 +89,7 @@ export default class MostSpeaker implements Command {
       color: 0xe7a3ff,
       fields: list,
     };
-    await (message.guild.channels.cache.get(
-      "546411892793540609"
-    ) as discord.TextChannel).send({ embed: embed });
+    await generalChannel.send({ embed: embed });
   }
 
   public help(): string {

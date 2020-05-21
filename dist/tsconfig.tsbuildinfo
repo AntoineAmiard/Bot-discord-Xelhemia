@@ -507,12 +507,12 @@
         "affectsGlobalScope": true
       },
       "../src/commands/most_speaker.ts": {
-        "version": "5ee3219f1cd76733c71b7b58c3c79ceb813204fc3480d549c2acffdd7302c6ef",
+        "version": "00322512180cfc2a4fee36b63db9ab8c878241cf72ad1fa8f2c72073e16afad5",
         "signature": "695d5f3795bef239f71195b7d1f2718c1c385fd0b65ea82236f55751a0b197a3",
         "affectsGlobalScope": false
       },
       "../src/commands/ping.ts": {
-        "version": "1666d1865066197bcf04b59ff8d5b2a33bfb5a4cca548ee0ad2219facfc4de53",
+        "version": "8bbdde57a1a50bc0234a042c60759f12897af62181f39b0b176b95231a009521",
         "signature": "f75bac9f883feef7c233a4dafbee084e81e44a8b1526cf9184585937461fd709",
         "affectsGlobalScope": false
       },
@@ -559,6 +559,7 @@
       "baseUrl": "..",
       "incremental": true,
       "resolveJsonModule": true,
+      "watch": true,
       "configFilePath": "../tsconfig.json"
     },
     "referencedMap": {

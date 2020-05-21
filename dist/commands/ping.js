@@ -6,7 +6,7 @@ class Ping {
         this.description = "";
     }
     async execute(message) {
-        await message.guild.channels.cache.get("546411892793540609").send("Pong !");
+        await message.channel.send("Pong !");
     }
     help() {
         return "Display pong";
